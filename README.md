@@ -1,46 +1,41 @@
 # curs-valutar.net
 
-[curs-valutar.net](https://www.curs-valutar.net/) is a Romanian site that provides daily exchange rates, a currency converter, historical data, and charts for currency trends, mainly based on official sources like the National Bank of Romania.
+[curs-valutar.net](https://www.curs-valutar.net/) displays the latest exchange rates published by the National Bank of Romania (BNR).
 
-## 🌐 Features
+## Current features
 
-## Features
+- Shows the BNR publication date, publisher, and available currency rates, including each rate's published multiplier.
+- Formats rates using Romanian number conventions and displays country flags where available.
+- Reads the official BNR XML feed. The feed is cached for one hour; if a refresh fails, a previously cached feed is used.
+- Shows an unavailable message and returns HTTP 503 if rates cannot be loaded and no usable cached data is available.
+- The `CursValutarBNR` class also provides methods for retrieving individual rates and converting amounts, but the current page is a rates table only.
 
-- **BNR Exchange Rates, Daily & Intraday**
-  - Fetches the official BNR reference rates on every banking day (after ~13:00 EET).
-  - Optional intraday quotes via configurable secondary sources for preview-only displays.
+Historical data, charts, CSV/JSON exports, intraday rates, and a browser-based currency converter are not currently implemented.
 
-- **Historical Archive (2005 → Today)**
-  - Full history per currency, with day-by-day drill‑down.
-  - CSV/JSON export for accounting and BI workflows.
+## Run locally
 
-- **Fast Currency Converter**
-  - Accurate conversions using the selected day’s BNR rate.
-  - Supports multi‑decimal precision and VAT calculator helpers.
+Requirements: PHP with the SimpleXML extension, outbound access to the BNR feed, and permission to write to the system temporary directory for the cache.
 
-- **Interactive Charts**
-  - Time-series graphs (7d/30d/YTD/1y custom) for EUR, USD, CHF, GBP, XAU, etc.
-  - Tooltips, min/max markers, and moving averages.
+Clone the repository and start PHP's built-in development server from the project directory:
 
-- **Data Quality & Compliance**
-  - Clear “not affiliated with BNR” disclaimer.
-  - Source stamping (publish time, last refresh), integrity checks, and audit log.
-
-## 🚀 Installation
-Clone the repository:
-```
+```sh
 git clone https://github.com/mihaimoga/curs-valutar.net.git
+cd curs-valutar.net
+php -S localhost:8000
 ```
-Navigate to the project folder and open index.php in your browser.
 
-## 🛠 Tech Stack
+Open <http://localhost:8000> in a browser.
 
-- HTML5 / CSS3
-- JavaScript
-- Hosting: [name.com](https://www.name.com/)
+## Tech stack
 
-## 🤝 Contributing
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+- PHP
+- HTML and Bootstrap 5
+- Flag Icons
 
-## 📄 License
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
 This project is licensed under the MIT License.
