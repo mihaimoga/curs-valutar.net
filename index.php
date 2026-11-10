@@ -37,10 +37,10 @@ try {
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 		<link href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" rel="stylesheet">
 		<style type="text/css">
-			html, body { height: 100%; }
-			body { display: flex; flex-direction: column; }
-			header, footer { background: black; color: white; padding: 1rem; text-align: center; }
-			header { position: sticky; top: 0; z-index: 1000; }
+			body { display: flex; flex-direction: column; min-height: 100vh; }
+			header, footer { background: black; color: white; padding: 1rem; text-align: center; position: sticky; z-index: 1000; }
+			header { top: 0; }
+			footer { bottom: 0; }
 			main { flex: 1; padding: 1rem; }
 		</style>
 	</head>
