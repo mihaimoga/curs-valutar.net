@@ -1,6 +1,6 @@
 # curs-valutar.net
 
-[curs-valutar.net](https://www.curs-valutar.net/) displays the latest exchange rates published by the National Bank of Romania (BNR).
+[curs-valutar.net](https://www.curs-valutar.net/) displays exchange rates published by the National Bank of Romania (BNR), including monthly average EUR rates.
 
 ## Current features
 
@@ -9,8 +9,10 @@
 - Reads the official BNR XML feed. The feed is cached for one hour; if a refresh fails, a previously cached feed is used.
 - Shows an unavailable message and returns HTTP 503 if rates cannot be loaded and no usable cached data is available.
 - The `CursValutarBNR` class also provides methods for retrieving individual rates and converting amounts, but the current page is a rates table only.
+- The `CursValutarAnual` class reads the current year's BNR annual XML feed, caches it for one hour, and indexes rates by publication date.
+- `curs-mediu-eur.php` displays the monthly average EUR/RON rate for the current year, calculated from the available daily BNR rates in each month, along with the number of published rates used.
 
-Historical data, charts, CSV/JSON exports, intraday rates, and a browser-based currency converter are not currently implemented.
+Charts, CSV/JSON exports, intraday rates, and a browser-based currency converter are not currently implemented.
 
 ## Run locally
 
@@ -24,7 +26,7 @@ cd curs-valutar.net
 php -S localhost:8000
 ```
 
-Open <http://localhost:8000> in a browser.
+Open <http://localhost:8000> for current rates or <http://localhost:8000/curs-mediu-valutar-eur.php> for monthly average EUR rates.
 
 ## Tech stack
 
