@@ -1,9 +1,42 @@
+<!--
+MIT License
+
+Copyright (c) 2026 Ștefan-Mihai MOGA
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+
 <?php
+/**
+ * Displays monthly average BNR exchange rates for EUR, USD, and GBP.
+ */
 require __DIR__ . '/CursValutarAnual.php';
 
+/**
+ * Escapes a string for safe insertion into HTML.
+ *
+ * @param string $s String to escape.
+ * @return string HTML-escaped string.
+ */
 function h(string $s): string
 {
-    return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+	return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 }
 
 $error = null;
@@ -13,41 +46,44 @@ $year = '';
 $currencies = ['EUR', 'USD', 'GBP'];
 
 try {
-    $anual = new CursValutarAnual();
-    $dates = $anual->getDates();
-    $year = substr($anual->getDate(), 0, 4);
+	$anual = new CursValutarAnual();
+	$dates = $anual->getDates();
+	$year = substr($anual->getDate(), 0, 4);
 
-    foreach ($dates as $date) {
-        $month = substr($date, 5, 2);
-        foreach ($currencies as $currency) {
-            if (!$anual->hasCurrency($date, $currency)) {
-                continue;
-            }
+	foreach ($dates as $date) {
+		// Group each published daily rate by month to calculate monthly averages.
+		$month = substr($date, 5, 2);
+		foreach ($currencies as $currency) {
+			// Some currencies may not have a published rate for every date.
+			if (!$anual->hasCurrency($date, $currency)) {
+				continue;
+			}
 
-            $monthlyAverages[$month][$currency]['sum'] =
-                ($monthlyAverages[$month][$currency]['sum'] ?? 0) + $anual->getRate($date, $currency);
-            $monthlyAverages[$month][$currency]['count'] =
-                ($monthlyAverages[$month][$currency]['count'] ?? 0) + 1;
-        }
-    }
+			// Keep a sum and count so missing dates do not affect the average.
+			$monthlyAverages[$month][$currency]['sum'] =
+				($monthlyAverages[$month][$currency]['sum'] ?? 0) + $anual->getRate($date, $currency);
+			$monthlyAverages[$month][$currency]['count'] =
+				($monthlyAverages[$month][$currency]['count'] ?? 0) + 1;
+		}
+	}
 } catch (Throwable $e) {
-    http_response_code(503);
-    $error = 'Cursul valutar nu este disponibil momentan. Va rugam reveniti.';
+	http_response_code(503);
+	$error = 'Cursul valutar nu este disponibil momentan. Va rugam reveniti.';
 }
 
 $months = [
-    '01' => 'Ianuarie',
-    '02' => 'Februarie',
-    '03' => 'Martie',
-    '04' => 'Aprilie',
-    '05' => 'Mai',
-    '06' => 'Iunie',
-    '07' => 'Iulie',
-    '08' => 'August',
-    '09' => 'Septembrie',
-    '10' => 'Octombrie',
-    '11' => 'Noiembrie',
-    '12' => 'Decembrie',
+	'01' => 'Ianuarie',
+	'02' => 'Februarie',
+	'03' => 'Martie',
+	'04' => 'Aprilie',
+	'05' => 'Mai',
+	'06' => 'Iunie',
+	'07' => 'Iulie',
+	'08' => 'August',
+	'09' => 'Septembrie',
+	'10' => 'Octombrie',
+	'11' => 'Noiembrie',
+	'12' => 'Decembrie',
 ];
 ?>
 <!DOCTYPE html>
@@ -99,6 +135,7 @@ $months = [
 									<?php foreach ($currencies as $currency): ?>
 										<?php
 										$count = $monthlyAverages[$month][$currency]['count'] ?? 0;
+										// Show a dash when no daily rates were published for this month.
 										$average = $count > 0 ? $monthlyAverages[$month][$currency]['sum'] / $count : null;
 										?>
 										<td class="text-end"><?= $average !== null ? number_format($average, 4, ',', '.') : '—' ?></td>

@@ -16,7 +16,7 @@ Charts, CSV/JSON exports, intraday rates, and a browser-based currency converter
 
 ## Run locally
 
-Requirements: PHP with the SimpleXML extension, outbound access to the BNR feed, and permission to write to the system temporary directory for the cache.
+Requirements: PHP with the `SimpleXML` and `curl` (optional, falls back to `file_get_contents`) extensions, outbound access to the BNR feed, and write permission to the system temporary directory (or a custom cache directory) for caching.
 
 Clone the repository and start PHP's built-in development server from the project directory:
 
