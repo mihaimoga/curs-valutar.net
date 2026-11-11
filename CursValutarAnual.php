@@ -41,10 +41,12 @@ class CursValutarAnual
     {
         $exists = is_file($this->cacheFile);
 
+        // Never read before: download immediately. Otherwise wait for the TTL to expire.
         if (!$exists || !$this->isFresh()) {
             try {
                 $this->download($source);
             } catch (RuntimeException $e) {
+                // Keep serving the stale local file if the refresh fails.
                 if (!$exists) {
                     throw $e;
                 }
@@ -54,6 +56,7 @@ class CursValutarAnual
         try {
             $this->parse($this->cacheFile);
         } catch (RuntimeException $e) {
+            // Corrupt local file: replace it with a fresh download.
             $this->download($source);
             $this->parse($this->cacheFile);
         }
@@ -65,6 +68,7 @@ class CursValutarAnual
         return $mtime !== false && (time() - $mtime) < self::CACHE_TTL;
     }
 
+    /** Downloads the feed and stores it atomically in the local XML file. */
     private function download(string $source): void
     {
         $xmlText = $this->fetch($source);
@@ -75,6 +79,7 @@ class CursValutarAnual
         }
     }
 
+    /** Reads the values from the local XML file. */
     private function parse(string $file): void
     {
         $this->rates = [];

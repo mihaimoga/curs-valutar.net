@@ -10,6 +10,7 @@ $error = null;
 $anual = null;
 $monthlyAverages = [];
 $year = '';
+$currencies = ['EUR', 'USD', 'GBP'];
 
 try {
     $anual = new CursValutarAnual();
@@ -17,13 +18,17 @@ try {
     $year = substr($anual->getDate(), 0, 4);
 
     foreach ($dates as $date) {
-        if (!$anual->hasCurrency($date, 'EUR')) {
-            continue;
-        }
-
         $month = substr($date, 5, 2);
-        $monthlyAverages[$month]['sum'] = ($monthlyAverages[$month]['sum'] ?? 0) + $anual->getRate($date, 'EUR');
-        $monthlyAverages[$month]['count'] = ($monthlyAverages[$month]['count'] ?? 0) + 1;
+        foreach ($currencies as $currency) {
+            if (!$anual->hasCurrency($date, $currency)) {
+                continue;
+            }
+
+            $monthlyAverages[$month][$currency]['sum'] =
+                ($monthlyAverages[$month][$currency]['sum'] ?? 0) + $anual->getRate($date, $currency);
+            $monthlyAverages[$month][$currency]['count'] =
+                ($monthlyAverages[$month][$currency]['count'] ?? 0) + 1;
+        }
     }
 } catch (Throwable $e) {
     http_response_code(503);
@@ -49,7 +54,7 @@ $months = [
 <html lang="ro">
 	<head>
 		<meta charset="utf-8">
-		<title>Cursul mediu lunar EUR (BNR)</title>
+		<title>Cursuri medii lunare EUR, USD și GBP (BNR)</title>
 		<link rel="icon" type="image/png" href="romania-flag-square-icon-256.png">
 		<link rel="apple-touch-icon" href="romania-flag-square-icon-256.png">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -64,36 +69,40 @@ $months = [
 	</head>
 	<body>
 		<header>
-			<strong>Cursul mediu lunar EUR (Banca Națională a României)</strong>
+			<strong>Cursuri medii lunare EUR, USD și GBP (Banca Națională a României)</strong>
 		</header>
 		<main class="container">
 			<?php if ($error !== null): ?>
 				<div class="alert alert-danger text-center"><?= h($error) ?></div>
 			<?php else: ?>
 				<p class="text-center">
-					Cursul mediu lunar EUR pentru anul <strong><?= h($year) ?></strong>,
-					calculat ca media cursurilor publicate de BNR în fiecare lună.
+					Cursurile medii lunare EUR, USD și GBP pentru anul <strong><?= h($year) ?></strong>,
+					calculate ca media cursurilor publicate de BNR în fiecare lună.
 				</p>
 				<div class="table-responsive">
 					<table class="table table-striped table-hover w-auto mx-auto">
 						<thead>
 							<tr>
 								<th>Luna</th>
-								<th class="text-end">Zile publicate</th>
-								<th class="text-end">Curs mediu (RON pentru 1 EUR)</th>
+								<?php foreach ($currencies as $currency): ?>
+									<th class="text-center"><?= h($currency) ?></th>
+								<?php endforeach; ?>
+							</tr>
+							<tr>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php foreach ($months as $month => $name): ?>
-								<?php
-								$average = isset($monthlyAverages[$month])
-									? $monthlyAverages[$month]['sum'] / $monthlyAverages[$month]['count']
-									: null;
-								?>
 								<tr>
 									<td><?= h($name) ?></td>
-									<td class="text-end"><?= $monthlyAverages[$month]['count'] ?? 0 ?></td>
-									<td class="text-end"><?= $average !== null ? number_format($average, 4, ',', '.') : '—' ?></td>
+									<?php foreach ($currencies as $currency): ?>
+										<?php
+										$count = $monthlyAverages[$month][$currency]['count'] ?? 0;
+										$average = $count > 0 ? $monthlyAverages[$month][$currency]['sum'] / $count : null;
+										?>
+										<td class="text-end"><?= $average !== null ? number_format($average, 4, ',', '.') : '—' ?></td>
+									<?php endforeach; ?>
 								</tr>
 							<?php endforeach; ?>
 						</tbody>
