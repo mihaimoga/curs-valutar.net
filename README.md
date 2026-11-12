@@ -10,6 +10,10 @@
 - Shows an unavailable message and returns HTTP 503 if rates cannot be loaded and no usable cached data is available.
 - The `CursValutarBNR` class also provides methods for retrieving individual rates and converting amounts, but the current page is a rates table only.
 - The `CursValutarAnual` class reads the current year's BNR annual XML feed, caches it for one hour, and indexes rates by publication date.
+- The `CursValutar10days` class reads the latest ten days from BNR's `nbrfxrates10days.xml` feed, caches it for one hour, and provides the same date-indexed rate methods as `CursValutarAnual`.
+- `EvolutieValutaEUR.php` displays the EUR/RON rate for the latest ten days and its absolute and percentage variation from the previous published rate.
+- `EvolutieValutaUSD.php` displays the USD/RON rate for the latest ten days and its absolute and percentage variation from the previous published rate.
+- `EvolutieValutaGBP.php` displays the GBP/RON rate for the latest ten days and its absolute and percentage variation from the previous published rate.
 - `CursulMediuValutar.php` displays the monthly average EUR/RON, USD/RON, and GBP/RON rates for the current year, calculated independently from the available daily BNR rates in each month, along with the number of published rates used for each currency.
 
 Charts, CSV/JSON exports, intraday rates, and a browser-based currency converter are not currently implemented.
@@ -26,7 +30,7 @@ cd curs-valutar.net
 php -S localhost:8000
 ```
 
-Open <http://localhost:8000> for current rates or <http://localhost:8000/CursulMediuValutar.php> for monthly average EUR, USD, and GBP rates.
+Open <http://localhost:8000> for current rates, <http://localhost:8000/CursulMediuValutar.php> for monthly average EUR, USD, and GBP rates, or <http://localhost:8000/EvolutieValutaEUR.php>, <http://localhost:8000/EvolutieValutaUSD.php>, and <http://localhost:8000/EvolutieValutaGBP.php> for recent EUR/RON, USD/RON, and GBP/RON changes.
 
 ## Tech stack
 

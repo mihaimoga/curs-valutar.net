@@ -120,7 +120,7 @@ try {
 				</div>
 				<p class="text-center text-muted small">Sursa: <?= h($bnr->getPublisher()) ?></p>
 			<?php endif; ?>
-			<p class="text-center"><a href="CursulMediuValutar.php">Cursuri medii lunare EUR, USD și GBP</a></p>
+			<p class="text-center"><a href="CursulMediuValutar.php">Cursuri medii lunare EUR, USD și GBP</a> | <a href="EvolutieValutaEUR.php">Evoluție EUR/RON</a> | <a href="EvolutieValutaUSD.php">Evoluție USD/RON</a> | <a href="EvolutieValutaGBP.php">Evoluție GBP/RON</a></p>
 		</main>
 		<footer>
 			Website dezvoltat de <a href="https://www.moga.doctor/" target="_blank">Stefan-Mihai MOGA</a>
